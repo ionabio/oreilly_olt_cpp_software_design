@@ -50,5 +50,5 @@ set_target_properties(
    Strategy_Static
    UniquePtr_Strategy
    PROPERTIES
-   FOLDER "C_Cpp_Software_Design/Strategy"
+   FOLDER "2_Cpp_Software_Design/Strategy"
    )

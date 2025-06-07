@@ -30,5 +30,5 @@ set_target_properties(
    ObjectOriented
    Procedural
    PROPERTIES
-   FOLDER "C_Cpp_Software_Design/Motivation"
+   FOLDER "2_Cpp_Software_Design/Motivation"
    )

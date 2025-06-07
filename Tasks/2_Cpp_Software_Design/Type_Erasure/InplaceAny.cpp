@@ -38,15 +38,17 @@ class Any
       ::new (pimpl()) M( t );  // Alternatively 'std::construct_at()' (C++20)
    }
 
-   Any( Any const& any )
+   Any( Any const& other )
    {
-      any.pimpl()->clone( pimpl() );
+      other.pimpl()->clone( pimpl() );
    }
 
-   Any& operator=( Any const& any )
+   Any& operator=( Any const& other )
    {
-      pimpl()->~Concept();
-      any.pimpl()->clone( pimpl() );
+      if( this != &other ) {
+         pimpl()->~Concept();
+         other.pimpl()->clone( pimpl() );
+      }
       return *this;
    }
 

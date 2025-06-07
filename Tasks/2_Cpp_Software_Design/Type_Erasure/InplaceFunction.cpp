@@ -35,15 +35,17 @@ class Function<R(Args...),Capacity,Alignment>
       ::new (pimpl()) M( callable );  // Alternatively 'std::construct_at()' (C++20)
    }
 
-   Function( Function const& f )
+   Function( Function const& other )
    {
-      f.pimpl()->clone( pimpl() );
+      other.pimpl()->clone( pimpl() );
    }
 
-   Function& operator=( Function const& f )
+   Function& operator=( Function const& other )
    {
-      pimpl()->~Concept();
-      f.pimpl()->clone( pimpl() );
+      if( this != &other ) {
+         pimpl()->~Concept();
+         other.pimpl()->clone( pimpl() );
+      }
       return *this;
    }
 

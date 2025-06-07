@@ -95,5 +95,5 @@ set_target_properties(
    TypeErasure_SBO_2
    UniquePtr_TypeErasure
    PROPERTIES
-   FOLDER "C_Cpp_Software_Design/Type_Erasure"
+   FOLDER "2_Cpp_Software_Design/Type_Erasure"
    )

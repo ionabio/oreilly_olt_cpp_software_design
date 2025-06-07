@@ -40,5 +40,5 @@ set_target_properties(
    Visitor_Classic
    Visitor_Refactoring
    PROPERTIES
-   FOLDER "C_Cpp_Software_Design/Visitor"
+   FOLDER "2_Cpp_Software_Design/Visitor"
    )

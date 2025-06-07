@@ -40,5 +40,5 @@ set_target_properties(
    FastPimpl
    Pimpl
    PROPERTIES
-   FOLDER "C_Cpp_Software_Design/Bridge"
+   FOLDER "2_Cpp_Software_Design/Bridge"
    )

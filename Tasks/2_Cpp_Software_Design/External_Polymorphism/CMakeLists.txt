@@ -30,5 +30,5 @@ set_target_properties(
    ExternalPolymorphism_1
    ExternalPolymorphism_2
    PROPERTIES
-   FOLDER "C_Cpp_Software_Design/External_Polymorphism"
+   FOLDER "2_Cpp_Software_Design/External_Polymorphism"
    )

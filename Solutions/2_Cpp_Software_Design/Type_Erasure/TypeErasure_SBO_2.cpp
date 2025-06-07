@@ -342,8 +342,10 @@ class Shape
       // operation throws an exception, then there is no way to reset the 'Shape' into a
       // valid state. The 'Shape' is 'valueless_by_exception', similar to what would happen
       // in a 'std::variant'.
-      pimpl_->~Concept();
-      pimpl_ = other.pimpl_->clone( buffer.data() );
+      if( this != &other ) {
+         pimpl_->~Concept();
+         pimpl_ = other.pimpl_->clone( buffer.data() );
+      }
       return *this;
    }
 

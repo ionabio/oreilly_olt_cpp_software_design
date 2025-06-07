@@ -20,5 +20,5 @@ add_executable(Prototype
 set_target_properties(
    Prototype
    PROPERTIES
-   FOLDER "C_Cpp_Software_Design/Prototype"
+   FOLDER "2_Cpp_Software_Design/Prototype"
    )
