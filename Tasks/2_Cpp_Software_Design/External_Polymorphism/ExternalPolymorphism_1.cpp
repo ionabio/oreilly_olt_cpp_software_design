@@ -1,44 +1,45 @@
 /**************************************************************************************************
-*
-* \file ExternalPolymorphism_1.cpp
-* \brief C++ Training - Programming Task for the External Polymorphism Design Pattern
-*
-* Copyright (C) 2015-2025 Klaus Iglberger - All Rights Reserved
-*
-* This file is part of the C++ training by Klaus Iglberger. The file may only be used in the
-* context of the C++ training or with explicit agreement by Klaus Iglberger.
-*
-* Step 1: Refactor the given 'Shape' hierarchy by means of the External Polymorphism design
-*         pattern to extract the 'draw()' operation from shapes.
-*
-* Step 2: Switch from one to another graphics library. Discuss the feasibility of the change:
-*         how easy is the change? How many pieces of code on which level of the architecture
-*         have to be touched?
-*
-* Task 3: Add the new feature to serialize shapes by means of the 'FastSerialization' library.
-*         Observe how well the new code can be integrated and how many new dependencies are
-*         created.
-*
-**************************************************************************************************/
-
+ *
+ * \file ExternalPolymorphism_1.cpp
+ * \brief C++ Training - Programming Task for the External Polymorphism Design Pattern
+ *
+ * Copyright (C) 2015-2025 Klaus Iglberger - All Rights Reserved
+ *
+ * This file is part of the C++ training by Klaus Iglberger. The file may only be used in the
+ * context of the C++ training or with explicit agreement by Klaus Iglberger.
+ *
+ * Step 1: Refactor the given 'Shape' hierarchy by means of the External Polymorphism design
+ *         pattern to extract the 'draw()' operation from shapes.
+ *
+ * Step 2: Switch from one to another graphics library. Discuss the feasibility of the change:
+ *         how easy is the change? How many pieces of code on which level of the architecture
+ *         have to be touched?
+ *
+ * Task 3: Add the new feature to serialize shapes by means of the 'FastSerialization' library.
+ *         Observe how well the new code can be integrated and how many new dependencies are
+ *         created.
+ *
+ **************************************************************************************************/
 
 //---- <GraphicsLibrary.h> (external) -------------------------------------------------------------
 
 #include <string>
 // ... and many more graphics-related headers
 
-namespace gl {
-
-enum class Color
+namespace gl
 {
-   red   = 0xFF0000,
-   green = 0x00FF00,
-   blue  = 0x0000FF
-};
 
-std::string to_string( Color color )
-{
-   switch( color ) {
+   enum class Color
+   {
+      red = 0xFF0000,
+      green = 0x00FF00,
+      blue = 0x0000FF
+   };
+
+   std::string to_string(Color color)
+   {
+      switch (color)
+      {
       case Color::red:
          return "red (0xFF0000)";
       case Color::green:
@@ -47,11 +48,10 @@ std::string to_string( Color color )
          return "blue (0x0000FF)";
       default:
          return "unknown";
+      }
    }
-}
 
 } // namespace gl
-
 
 //---- <GraphicsFramework.h> (external) -----------------------------------------------------------
 
@@ -59,22 +59,24 @@ std::string to_string( Color color )
 #include <string>
 // ... and many more graphics-related headers
 
-namespace gf {
-
-enum class Color : int
+namespace gf
 {
-   yellow  = 0xFFFF00,
-   cyan    = 0x00FFFF,
-   magenta = 0xFF00FF
-};
 
-using Brightness = unsigned int;
+   enum class Color : int
+   {
+      yellow = 0xFFFF00,
+      cyan = 0x00FFFF,
+      magenta = 0xFF00FF
+   };
 
-std::string print_string( Color color, Brightness brightness )
-{
-   std::ostringstream oss;
+   using Brightness = unsigned int;
 
-   switch( color ) {
+   std::string print_string(Color color, Brightness brightness)
+   {
+      std::ostringstream oss;
+
+      switch (color)
+      {
       case Color::yellow:
          oss << "yellow (0xFFFF00)";
          break;
@@ -87,15 +89,14 @@ std::string print_string( Color color, Brightness brightness )
       default:
          oss << "unknown";
          break;
+      }
+
+      oss << ", brightness=" << brightness;
+
+      return oss.str();
    }
 
-   oss << ", brightness=" << brightness;
-
-   return oss.str();
-}
-
 } // namespace gf
-
 
 //---- <FastSerialization.h> (external) -----------------------------------------------------------
 
@@ -105,35 +106,35 @@ std::string print_string( Color color, Brightness brightness )
 #include <vector>
 // ... and many more serialization-related headers
 
-namespace fs {
-
-class Serializer
+namespace fs
 {
- public:
-   std::string to_string() const
+
+   class Serializer
    {
-      return std::string( buffer_.data(), buffer_.size() );
-   }
+   public:
+      std::string to_string() const
+      {
+         return std::string(buffer_.data(), buffer_.size());
+      }
 
- private:
-   std::vector<char> buffer_;
+   private:
+      std::vector<char> buffer_;
 
-   template< typename T, typename = std::enable_if_t< std::is_arithmetic_v<T> > >
-   //   requires std::is_arithmetic_v<T>  // C++20 concept
-   friend Serializer& operator<<( Serializer& serializer, T value )
-   {
-      size_t const old_size = serializer.buffer_.size();
-      serializer.buffer_.resize( old_size + sizeof(T) );
+      template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
+      //   requires std::is_arithmetic_v<T>  // C++20 concept
+      friend Serializer &operator<<(Serializer &serializer, T value)
+      {
+         size_t const old_size = serializer.buffer_.size();
+         serializer.buffer_.resize(old_size + sizeof(T));
 
-      auto* data = serializer.buffer_.data() + old_size;
-      ::new (data) T{value};
+         auto *data = serializer.buffer_.data() + old_size;
+         ::new (data) T{value};
 
-      return serializer;
-   }
-};
+         return serializer;
+      }
+   };
 
 } // namespace fs
-
 
 //---- <Point.h> ----------------------------------------------------------------------------------
 
@@ -143,155 +144,103 @@ struct Point
    double y;
 };
 
-
-//---- <Shape.h> ----------------------------------------------------------------------------------
-
-class Shape
-{
- public:
-   virtual ~Shape() = default;
-
-   virtual void draw() const = 0;
-};
-
-
 //---- <Circle.h> ---------------------------------------------------------------------------------
 
-//#include <Shape.h>
-//#include <Point.h>
-//#include <GraphicsLibrary.h>
+// #include <Shape.h>
+// #include <Point.h>
+// #include <GraphicsLibrary.h>
 
-class Circle : public Shape
+class Circle
 {
- public:
-   explicit Circle( double radius, gl::Color color )
-      : radius_{ radius }
-      , center_{}
-      , color_{ color }
-   {}
+public:
+   explicit Circle(double radius)
+       : radius_{radius}, center_{} {}
 
    double radius() const { return radius_; }
-   Point  center() const { return center_; }
+   Point center() const { return center_; }
 
-   void draw() const override;
-
- private:
+private:
    double radius_;
    Point center_;
-   gl::Color color_{};
 };
-
-
-//---- <Circle.cpp> -------------------------------------------------------------------------------
-
-//#include <Circle.h>
-#include <iostream>
-
-void Circle::draw() const
-{
-   std::cout << "circle: radius=" << radius_
-             << ", color = " << gl::to_string(color_) << '\n';
-}
-
 
 //---- <Square.h> ---------------------------------------------------------------------------------
 
-//#include <Shape.h>
-//#include <Point.h>
-//#include <GraphicsLibrary.h>
+// #include <Shape.h>
+// #include <Point.h>
+// #include <GraphicsLibrary.h>
 
-class Square : public Shape
+class Square
 {
- public:
-   explicit Square( double side, gl::Color color )
-      : side_{ side }
-      , center_{}
-      , color_{ color }
-   {}
+public:
+   explicit Square(double side)
+       : side_{side}, center_{}
+   {
+   }
 
    double side() const { return side_; }
-   Point  center() const { return center_; }
+   Point center() const { return center_; }
 
-   void draw() const override;
-
- private:
+private:
    double side_;
    Point center_;
-   gl::Color color_{};
 };
-
-
-//---- <Square.cpp> -------------------------------------------------------------------------------
-
-//#include <Square.h>
-#include <iostream>
-
-void Square::draw() const
-{
-   std::cout << "square: side=" << side_
-             << ", color = " << gl::to_string(color_) << '\n';
-}
-
 
 //==== ARCHITECTURAL BOUNDARY =====================================================================
 
-
 //---- <Draw.h> -----------------------------------------------------------------------------------
 
-//#include <Circle.h>
-//#include <Square.h>
-//#include <GraphicsLibrary.h>
+// #include <Circle.h>
+// #include <Square.h>
+// #include <GraphicsLibrary.h>
 
-void free_draw( Circle const& circle, gl::Color color );
-void free_draw( Square const& square, gl::Color color );
-
+void free_draw(Circle const &circle, gl::Color color);
+void free_draw(Square const &square, gl::Color color);
 
 //---- <Draw.cpp> ---------------------------------------------------------------------------------
 
-//#include <Draw.h>
+// #include <Draw.h>
 #include <iostream>
 
-void free_draw( Circle const& circle, gl::Color color )
+void free_draw(Circle const &circle, gl::Color color)
 {
    std::cout << "circle: radius=" << circle.radius()
              << ", color = " << gl::to_string(color) << '\n';
 }
 
-void free_draw( Square const& square, gl::Color color )
+void free_draw(Square const &square, gl::Color color)
 {
    std::cout << "square: side=" << square.side()
              << ", color = " << gl::to_string(color) << '\n';
 }
 
-
 //---- <GLDrawer.h> -------------------------------------------------------------------------------
 
-//#include <Circle.h>
-//#include <Square.h>
-//#include <GraphicsLibrary.h>
+// #include <Circle.h>
+// #include <Square.h>
+// #include <GraphicsLibrary.h>
 #include <iostream>
 
 class GLDrawer
 {
- public:
-   explicit GLDrawer( gl::Color color ) : color_{color} {}
+public:
+   explicit GLDrawer(gl::Color color) : color_{color} {}
 
-   void operator()( Circle const& circle ) const
+   void operator()(Circle const &circle) const
    {
       std::cout << "circle: radius=" << circle.radius()
                 << ", color = " << gl::to_string(color_) << '\n';
    }
 
-   void operator()( Square const& square ) const
+   void operator()(Square const &square) const
    {
       std::cout << "square: side=" << square.side()
                 << ", color = " << gl::to_string(color_) << '\n';
    }
 
- private:
+private:
    gl::Color color_{};
 };
-
 
 //---- <ShapeConcept.h> ---------------------------------------------------------------------------
 
@@ -299,56 +248,83 @@ class GLDrawer
 //       of shapes.
 
 class ShapeConcept
-{};
+{
+public:
+   virtual ~ShapeConcept() = default;
+   virtual void draw() const = 0;
+};
 
+template <typename ShapeT, typename DrawStrategy>
+class ShapeModel : public ShapeConcept
+{
+public:
+   ShapeModel(ShapeT const &shape, DrawStrategy draw)
+       : shape_{shape}, draw_{draw}
+   {
+   }
+
+   void draw() const override { draw_(shape_); }
+
+private:
+   ShapeT shape_;
+   DrawStrategy draw_;
+};
 
 //---- <Shapes.h> ---------------------------------------------------------------------------------
 
-//#include <Shape.h>
+// #include <Shape.h>
 #include <memory>
 #include <vector>
 
-using Shapes = std::vector<std::unique_ptr<Shape>>;
-
+using Shapes = std::vector<std::unique_ptr<ShapeConcept>>;
 
 //---- <DrawAllShapes.h> --------------------------------------------------------------------------
 
-//#include <Shapes.h>
+// #include <Shapes.h>
 
-void drawAllShapes( Shapes const& shapes );
-
+void drawAllShapes(Shapes const &shapes);
 
 //---- <DrawAllShapes.cpp> ------------------------------------------------------------------------
 
-//#include <DrawAllShapes.h>
+// #include <DrawAllShapes.h>
 
-void drawAllShapes( Shapes const& shapes )
+void drawAllShapes(Shapes const &shapes)
 {
-   for( auto const& shape : shapes )
+   for (auto const &shape : shapes)
    {
       shape->draw();
    }
 }
 
-
 //---- <Main.cpp> ---------------------------------------------------------------------------------
 
-//#include <Circle.h>
-//#include <Square.h>
-//#include <Shapes.h>
-//#include <DrawAllShapes.h>
+// #include <Circle.h>
+// #include <Square.h>
+// #include <Shapes.h>
+// #include <DrawAllShapes.h>
 #include <cstdlib>
+
+template <typename ShapeT, typename DrawStrategy>
+auto make_shape_model(ShapeT const &shape, DrawStrategy const &drawer)
+{
+   return std::make_unique<ShapeModel<ShapeT, DrawStrategy>>(shape, drawer);
+}
 
 int main()
 {
    Shapes shapes{};
 
-   shapes.emplace_back( std::make_unique<Circle>( 2.3, gl::Color::red   ) );
-   shapes.emplace_back( std::make_unique<Square>( 1.2, gl::Color::green ) );
-   shapes.emplace_back( std::make_unique<Circle>( 4.1, gl::Color::blue  ) );
+   auto lambda_draw = [](Circle const &circle)
+   {
+      std::cout << "Circle: radius=" << circle.radius()
+                << ", color = " << gl::to_string(gl::Color::red) << '\n';
+   };
 
-   drawAllShapes( shapes );
+   shapes.emplace_back(make_shape_model(Circle(2.3), lambda_draw));
+   shapes.emplace_back(make_shape_model(Square(1.2), GLDrawer(gl::Color::green)));
+   shapes.emplace_back(make_shape_model(Circle(4.1), GLDrawer(gl::Color::blue)));
+
+   drawAllShapes(shapes);
 
    return EXIT_SUCCESS;
 }
-
