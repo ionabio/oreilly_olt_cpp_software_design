@@ -242,6 +242,11 @@ public:
       pimpl_ = other.pimpl_->clone();
       return *this;
   }
+  Shape &operator=(Shape &&other) {
+      pimpl_ = std::move(other.pimpl_);
+      return *this;
+  }
+  ~Shape() = default;
   void draw() const { pimpl_->draw(); }
 };
 
